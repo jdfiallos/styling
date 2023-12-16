@@ -4,6 +4,7 @@ import {
   ProductImage,
   ProductTitle,
 } from "../components";
+import '../styles/custom-styles.css';
 
 interface productPros {
   id: number;
@@ -21,6 +22,14 @@ const product: productPros = {
   description: "Coffee Mug",
 };
 
+const product2: productPros = {
+  id: 2,
+  title: "Coffee Mug - Meme",
+  img: "./coffee-mug2.png",
+  price: 10,
+  description: "Coffee Mug",
+};
+
 export const ShoppingPage = () => {
   return (
     <div>
@@ -33,16 +42,25 @@ export const ShoppingPage = () => {
           flexWrap: "wrap",
         }}>
         <ProductCard product={product}>
-          <ProductImage />
-          <ProductTitle title={product.title} />
-          <ProductButtons />
-        </ProductCard>
-
-        <ProductCard product={product}>
           <ProductCard.Image />
           <ProductCard.Title title={product.title} />
           <ProductCard.Buttons />
         </ProductCard>
+{/* 
+        <ProductCard className='bg-dark' product={product}>
+          <ProductImage className='custom-image' />
+          <ProductTitle className='text-white text-bold' title={product.title} />
+          <ProductButtons className='custom-buttons' />
+        </ProductCard> */}
+
+
+        <ProductCard
+        product={product2}>
+          <ProductImage />
+          <ProductTitle />
+          <ProductButtons  />
+        </ProductCard>
+
       </div>
     </div>
   );
