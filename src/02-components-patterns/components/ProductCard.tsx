@@ -4,6 +4,7 @@ import useProduct from "../hooks/useProduct";
 import {
   Product,
   ProductContextProps,
+  onChangeArgs,
 } from "../interfaces/Product.Interface";
 
 export const ProductContext = createContext({} as ProductContextProps);
@@ -14,10 +15,11 @@ export interface Props {
   children?: ReactNode;
   className?: string;
   style?: CSSProperties;
+  onChange?: (args: onChangeArgs) => void;  
 }
 
-export const ProductCard = ({ children, product, className,  style}: Props) => {
-  const { counter, increaseBy } = useProduct();
+export const ProductCard = ({ children, product, className, onChange, style}: Props) => {
+  const { counter, increaseBy } = useProduct({ onChange, product });
 
   return (
     <Provider

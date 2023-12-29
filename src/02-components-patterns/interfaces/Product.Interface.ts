@@ -23,3 +23,8 @@ export interface ProductCardMainProps {
   Image: (Props: ProductImageProps) => JSX.Element;
   Buttons: (Props: ProductButtonProps) => JSX.Element;
 }
+
+export interface onChangeArgs {
+  product: Product;
+  count: number;
+}

@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import {
   ProductButtons,
   ProductCard,
@@ -5,6 +6,7 @@ import {
   ProductTitle,
 } from "../components";
 import '../styles/custom-styles.css';
+import { Product } from "../interfaces/Product.Interface";
 
 interface productPros {
   id: number;
@@ -30,7 +32,35 @@ const product2: productPros = {
   description: "Coffee Mug",
 };
 
+const products: productPros[] = [product, product2];
+
+interface ProductInCart extends productPros {
+  count: number;
+}
+
+
 export const ShoppingPage = () => {
+  
+  const [shoppingCart , setShoppingCart ] = useState<{ [key: string]: ProductInCart }>({
+    '1': { ...product, count: 1 }
+  });
+
+  const onProductCountChange = ({product, count} : {product: Product, count: number}) => {
+
+    count === 0 ? setShoppingCart( prevState => {
+      const newShoppingCart = { ...prevState };
+      delete newShoppingCart[product.id];
+      return newShoppingCart;
+    } ) : 
+    setShoppingCart({ ...shoppingCart, [product.id]: { ...product, count } });
+    
+  } 
+
+  useEffect(() => {
+    console.log('se llamo', shoppingCart);
+  }, [shoppingCart])
+  
+
   return (
     <div>
       <h1>Shopping Store</h1>
@@ -41,27 +71,35 @@ export const ShoppingPage = () => {
           flexDirection: "row",
           flexWrap: "wrap",
         }}>
-        <ProductCard product={product}>
-          <ProductCard.Image />
-          <ProductCard.Title title={product.title} />
-          <ProductCard.Buttons />
-        </ProductCard>
-{/* 
-        <ProductCard className='bg-dark' product={product}>
-          <ProductImage className='custom-image' />
-          <ProductTitle className='text-white text-bold' title={product.title} />
-          <ProductButtons className='custom-buttons' />
-        </ProductCard> */}
-
-
-        <ProductCard
-        product={product2}>
-          <ProductImage />
-          <ProductTitle />
-          <ProductButtons  />
-        </ProductCard>
-
+          {
+            products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                className="bg-dark text-white"
+                
+                >
+                  <ProductImage className="custom-image" />
+                  <ProductTitle className="text-bold" />
+                  <ProductButtons className="custom-buttons" />
+                </ProductCard>
+            ))
+          }
       </div>
+
+      <div className="shopping-cart">
+        <ProductCard
+          key={product2.id}
+          product={product2}
+          className="bg-dark text-white"
+          onChange={ onProductCountChange }
+          style={{width: '100px'}}
+          >
+            <ProductImage className="custom-image" />
+            <ProductButtons className="custom-buttons" />
+         </ProductCard>  
+      </div>
+
     </div>
   );
 };
