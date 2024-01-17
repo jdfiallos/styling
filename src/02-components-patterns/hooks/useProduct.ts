@@ -1,14 +1,16 @@
 import { useEffect, useRef, useState } from "react";
-import { Product, onChangeArgs } from "../interfaces/Product.Interface";
+import { InitialValues, Product, onChangeArgs } from "../interfaces/Product.Interface";
 
 interface useProductArgs {
   product: Product;
   onChange?: ( args: onChangeArgs ) => void;
   value?: number;
+  initialValue?: InitialValues;
 }
 
-const useProduct = ({ onChange, product, value = 0 }: useProductArgs) => {
-  const [counter, setCounter] = useState(value);
+const useProduct = ({ onChange, product, value = 0, initialValue }: useProductArgs) => {
+  const [counter, setCounter] = useState<number>( initialValue?.count || value);
+  const isMounted = useRef( false );
 
   const isControlled = useRef( !!onChange );
 
@@ -18,22 +20,33 @@ const useProduct = ({ onChange, product, value = 0 }: useProductArgs) => {
     }
 
     const newValue = Math.max( counter + value, 0)
-    // Misma acction pero diferente arguemnto de entrada.
-    // Si el valor es negativo, no se puede restar más de 0.
-    setCounter((prev) => Math.max(prev + value, 0));
+    if ( initialValue?.maxCount && (newValue > initialValue?.maxCount) ) return;
 
-    console.log('se eejcutaba')
+    setCounter((prev) => Math.max(prev + value, 0));
     onChange?.({ count: newValue, product });
   };
 
+  const reset = () => {
+    setCounter(initialValue?.count || value || 0);
+  }
+
   useEffect(() => {
+    if (!isMounted.current) return;
     setCounter(value);
-  }, [value])
+  }, [ value ])
+
+  useEffect(() => {
+    isMounted.current = true;
+  }, [])
+  
   
 
   return {
     counter,
     increaseBy,
+    reset,
+    isMaxCountReached: !!initialValue?.maxCount && counter === initialValue?.maxCount ,
+    maxCount: initialValue?.maxCount,
   };
 };
 
